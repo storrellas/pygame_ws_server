@@ -122,7 +122,9 @@ def game_forever():
         # Pausa
         reloj.tick(5)
 
-        pygame.image.save(pantalla, "screenshot.jpeg")
+        #pygame.image.save(pantalla, "screenshot.jpeg")
+        str = pygame.image.toString(pantalla, "RGBA")
+        print(str)
 ############ PY GAME ########################
 
 
