@@ -22,77 +22,70 @@ import os, sys
 # Colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
- 
-# Set height/width and margin for segment
-segment_width = 15
-segment_height = 15
-segment_margin = 3
- 
-#Velocidad inicial
-delta_x = segment_width + segment_margin
-delta_y = 0
 
-class Segment(pygame.sprite.Sprite):
-    """ 
-    Segment in the snake
-    """
 
-    def __init__(self, x, y):
-        # Super
-        super().__init__()
-          
-        # Set height and width
-        self.image = pygame.Surface([segment_height, segment_width])
-        self.image.fill(WHITE)
-  
-        # Set start point
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+
 
 
 class SnakeGame():
 
+    # Set height/width and margin for segment
+    segment_width = 15
+    segment_height = 15
+    segment_margin = 3
+
+    # Velocidad inicial
+    delta_x = segment_width + segment_margin
+    delta_y = 0
+
+    # Game variables
     display = None
     sprite_list = None
     snake_segments = []
     encodedStr = "Empty"
 
-    def pygame_init():
-        global display
-        global sprite_list
+    class Segment(pygame.sprite.Sprite):
+        """ 
+        Segment in the snake
+        """
+
+        def __init__(self, x, y, segment_height, segment_width):
+            # Super
+            super().__init__()
+            
+            # Set height and width
+            self.image = pygame.Surface([segment_height, segment_width])
+            self.image.fill(WHITE)
+    
+            # Set start point
+            self.rect = self.image.get_rect()
+            self.rect.x = x
+            self.rect.y = y
+
+    def __init__(self):
         # Initialise Pygame
         pygame.init()
         
         pygame.display.set_mode((1,1))
 
         # surface alone wouldn't work so I needed to add a rectangle
-        display = pygame.Surface((400, 400), pygame.SRCALPHA, 32)
-        pygame.draw.rect(display, (0,0,0), (0, 0, 400, 400), 0)
+        self.display = pygame.Surface((400, 400), pygame.SRCALPHA, 32)
+        pygame.draw.rect(self.display, (0,0,0), (0, 0, 400, 400), 0)
         
         # Set title
         pygame.display.set_caption('Snake')
         
-        sprite_list = pygame.sprite.Group()
+        self.sprite_list = pygame.sprite.Group()
         
         # Generate initial snake
         for i in range(15):
-            x = 250 - (segment_height + segment_margin) * i
+            x = 250 - (self.segment_height + self.segment_margin) * i
             y = 30
-            segment = Segment(x, y)
-            snake_segments.append(segment)
-            sprite_list.add(segment)
+            segment = SnakeGame.Segment(x, y, self.segment_height,self.segment_width)
+            self.snake_segments.append(segment)
+            self.sprite_list.add(segment)
         
-        
-
-
-
-    def game_forever():
-        global snake_segments
-        global sprin
-        global delta_x
-        global delta_y
-        global encodedStr
+    def game_forever(self):
         clock = pygame.time.Clock()
         done = False
         while not done:
@@ -105,35 +98,35 @@ class SnakeGame():
                 # We want speed to be enough to move a segment plus margin
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
-                        delta_x = (segment_height + segment_margin) * -1
-                        delta_y = 0
+                        self.delta_x = (segment_height + segment_margin) * -1
+                        self.delta_y = 0
                     if event.key == pygame.K_RIGHT:
-                        delta_x = (segment_height + segment_margin)
-                        delta_y = 0
+                        self.delta_x = (segment_height + segment_margin)
+                        self.delta_y = 0
                     if event.key == pygame.K_UP:
-                        delta_x = 0
-                        delta_y = (segment_height + segment_margin) * -1
+                        self.delta_x = 0
+                        self.delta_y = (segment_height + segment_margin) * -1
                     if event.key == pygame.K_DOWN:
-                        delta_x = 0
-                        delta_y = (segment_height + segment_margin)
+                        self.delta_x = 0
+                        self.delta_y = (segment_height + segment_margin)
                             
             # Delete last segment in snake
-            segment_old = snake_segments.pop()
-            sprite_list.remove(segment_old)
+            segment_old = self.snake_segments.pop()
+            self.sprite_list.remove(segment_old)
             
             # Caltulate where to make it appear
-            x = snake_segments[0].rect.x + delta_x
-            y = snake_segments[0].rect.y + delta_y
-            segment = Segment(x, y)
+            x = self.snake_segments[0].rect.x + self.delta_x
+            y = self.snake_segments[0].rect.y + self.delta_y
+            segment = SnakeGame.Segment(x, y, self.segment_height,self.segment_width)
             
             # Insert new segment
-            snake_segments.insert(0, segment)
-            sprite_list.add(segment)
+            self.snake_segments.insert(0, segment)
+            self.sprite_list.add(segment)
             
             # -- Clean display
-            display.fill(BLACK)
+            self.display.fill(BLACK)
             
-            sprite_list.draw(display)
+            self.sprite_list.draw(self.display)
                     
             # Update display
             pygame.display.flip()
@@ -143,16 +136,16 @@ class SnakeGame():
 
 
             print("New image available")
-            pygame.image.save(display, "screenshot.jpeg")
+            pygame.image.save(self.display, "screenshot.jpeg")
             #data = pygame.image.tostring(pygame.display.get_surface(), "RGB")
 
             # print(type(data))
 
             # # Standard Base64 Encoding
 
-            encodedBytes = base64.b64encode(data)
+            #encodedBytes = base64.b64encode(data)
             #encodedStr = str(encodedBytes, "utf-8")
-            encodedStr = encodedBytes.decode("utf-8")
+            #encodedStr = encodedBytes.decode("utf-8")
 
             # with open("Output.txt", "w") as text_file:
             #     text_file.write(encodedStr)
@@ -170,7 +163,7 @@ class SnakeGame():
             # print(type(data))
 
 ############ PY GAME ########################
-snake_game = SnakeGame()
+
 
 # WS server example
 
@@ -184,7 +177,7 @@ async def hello(websocket, path):
         print("+++++++++++++++++++++++++++++++++++++++++")
         print("+++++++++++++++++++++++++++++++++++++++++")
         print("+++++++++++++++++++++++++++++++++++++++++")
-        global encodedStr
+        #global encodedStr
         # name = await websocket.recv()
         # print(f"< {name}")
         # name="MyName"
@@ -199,8 +192,8 @@ async def hello(websocket, path):
         with open("screenshot.jpeg", "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read())
             print("-- Read --")
-            if encoded_string != encodedStr:
-                print("they are different")
+            # if encoded_string != encodedStr:
+            #     print("they are different")
             #print(type(encoded_string))
             await websocket.send(encoded_string.decode('utf-8'))
             #await websocket.send(encodedStr)
@@ -228,7 +221,8 @@ async def hello(websocket, path):
 # #####################
 
 # Launch separated thread
-snake_game.pygame_init()
+#snake_game.pygame_init()
+snake_game = SnakeGame()
 thread1 = threading.Thread(target=snake_game.game_forever)
 thread1.start()
 
