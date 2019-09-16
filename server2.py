@@ -16,11 +16,11 @@ import os, sys
 
 # set SDL to use the dummy NULL video driver, 
 #   so it doesn't need a windowing system.
-#os.environ["SDL_VIDEODRIVER"] = "dummy"
+os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 # --- Globals ---
 # Colors
-BLACK = (0, 0, 0)
+BLACK = (255, 0, 0)
 WHITE = (255, 255, 255)
 
 
@@ -69,8 +69,8 @@ class SnakeGame():
         pygame.display.set_mode((1,1))
 
         # surface alone wouldn't work so I needed to add a rectangle
-        self.display = pygame.Surface((400, 400), pygame.SRCALPHA, 32)
-        pygame.draw.rect(self.display, (0,0,0), (0, 0, 400, 400), 0)
+        self.display = pygame.Surface((800, 400), pygame.SRCALPHA, 32)
+        pygame.draw.rect(self.display, (0,0,0), (0, 0, 800, 400), 0)
         
         # Set title
         pygame.display.set_caption('Snake')
