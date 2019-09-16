@@ -7,47 +7,45 @@ import sys
 
 ############ PY GAME ########################
 
-# --- Globales ---
-# Colores
-NEGRO = (0, 0, 0)
-BLANCO = (255, 255, 255)
+# --- Globals ---
+# Colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
  
-# Set height/width for segment
+# Set height/width and margin for segment
 segment_width = 15
 segment_height = 15
-# Margen entre cada segmento
-margendel_segmento = 3
+segment_margin = 3
  
 #Velocidad inicial
-cambio_x = segment_width + margendel_segmento
+cambio_x = segment_width + segment_margin
 cambio_y = 0
 
 class Segment(pygame.sprite.Sprite):
     """ 
     Segment in the snake
     """
-    # -- Métodos
-    #  Función constructor
+
     def __init__(self, x, y):
-        # Llamada al constructor padre
+        # Super
         super().__init__()
           
-        # Establecemos el alto y largo
+        # Set height and width
         self.image = pygame.Surface([segment_height, segment_width])
-        self.image.fill(BLANCO)
+        self.image.fill(WHITE)
   
-        # Establecemos como punto de partida la esquina superior izquierda.
+        # Set start point
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
 
 
 pantalla = None
-listade_todoslos_sprites = None
-segementos_dela_serpiente = []
+sprite_list = None
+snake_segments = []
 def pygame_init():
     global pantalla
-    global listade_todoslos_sprites
+    global sprite_list
     # Inicializamos Pygame
     pygame.init()
     
@@ -55,17 +53,17 @@ def pygame_init():
     pantalla = pygame.display.set_mode([800, 600])
     
     # Creamos un título para la ventana
-    pygame.display.set_caption('Serpiente')
+    pygame.display.set_caption('Snake')
     
-    listade_todoslos_sprites = pygame.sprite.Group()
+    sprite_list = pygame.sprite.Group()
     
     # Creamos la serpiente inicial.
     for i in range(15):
-        x = 250 - (segment_height + margendel_segmento) * i
+        x = 250 - (segment_height + segment_margin) * i
         y = 30
         segment = Segment(x, y)
-        segementos_dela_serpiente.append(segment)
-        listade_todoslos_sprites.add(segment)
+        snake_segments.append(segment)
+        sprite_list.add(segment)
     
     
 import base64
@@ -76,8 +74,8 @@ import time
 
 encodedStr = "Empty"
 def game_forever():
-    global segementos_dela_serpiente
-    global listade_todoslos_sprites
+    global snake_segments
+    global sprin
     global cambio_x
     global cambio_y
     global encodedStr
@@ -94,37 +92,37 @@ def game_forever():
             # más el margen.
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_LEFT:
-                    cambio_x = (segment_height + margendel_segmento) * -1
+                    cambio_x = (segment_height + segment_margin) * -1
                     cambio_y = 0
                 if evento.key == pygame.K_RIGHT:
-                    cambio_x = (segment_height + margendel_segmento)
+                    cambio_x = (segment_height + segment_margin)
                     cambio_y = 0
                 if evento.key == pygame.K_UP:
                     cambio_x = 0
-                    cambio_y = (segment_height + margendel_segmento) * -1
+                    cambio_y = (segment_height + segment_margin) * -1
                 if evento.key == pygame.K_DOWN:
                     cambio_x = 0
-                    cambio_y = (segment_height + margendel_segmento)
+                    cambio_y = (segment_height + segment_margin)
                         
         # Eliminamos el último segmento de la serpiente
         # .pop() este comando elimina el último objeto de una lista.
-        segment_old = segementos_dela_serpiente.pop()
-        listade_todoslos_sprites.remove(segment_old)
+        segment_old = snake_segments.pop()
+        sprite_list.remove(segment_old)
         
         # Determinamos dónde aparecerá el nuevo segmento
-        x = segementos_dela_serpiente[0].rect.x + cambio_x
-        y = segementos_dela_serpiente[0].rect.y + cambio_y
+        x = snake_segments[0].rect.x + cambio_x
+        y = snake_segments[0].rect.y + cambio_y
         segment = Segment(x, y)
         
         # Insertamos un nuevo segmento en la lista
-        segementos_dela_serpiente.insert(0, segment)
-        listade_todoslos_sprites.add(segment)
+        snake_segments.insert(0, segment)
+        sprite_list.add(segment)
         
         # -- Dibujamos todo
         # Limpiamos la pantalla
-        pantalla.fill(NEGRO)
+        pantalla.fill(BLACK)
         
-        listade_todoslos_sprites.draw(pantalla)
+        sprite_list.draw(pantalla)
                 
         # Actualizamos la pantalla
         pygame.display.flip()
