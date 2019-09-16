@@ -71,7 +71,7 @@ from io import StringIO
 import time
 
 
-encodedStr = None
+encodedStr = "Empty"
 def game_forever():
     global segementos_dela_serpiente
     global listade_todoslos_sprites
@@ -129,15 +129,19 @@ def game_forever():
         # Pausa
         reloj.tick(1)
 
-        #pygame.image.save(pantalla, "screenshot.jpeg")
-        data = pygame.image.tostring(pygame.display.get_surface(), "RGB")
-        print("New image available")
-        print(type(data))
 
-        # Standard Base64 Encoding
+        pygame.image.save(pantalla, "screenshot.jpeg")
+        #data = pygame.image.tostring(pygame.display.get_surface(), "RGB")
+        # print("New image available")
+        # print(type(data))
 
-        encodedBytes = base64.b64encode(data)
-        encodedStr = str(encodedBytes, "utf-8")
+        # # Standard Base64 Encoding
+
+        # encodedBytes = base64.b64encode(data)
+        # encodedStr = str(encodedBytes, "utf-8")
+
+        # with open("Output.txt", "w") as text_file:
+        #     text_file.write(encodedStr)
         # print(len(encodedBytes))
         # print(encodedBytes[1:10])
         # print(type(encodedBytes))
@@ -169,16 +173,23 @@ async def hello(websocket, path):
         global encodedStr
         # name = await websocket.recv()
         # print(f"< {name}")
-        name="MyName"
-
-        greeting = f"Hello {name}!"
+        # name="MyName"
+        # greeting = f"Hello {name}!"
 
         #await websocket.send(greeting)
         # print(type(encodedStr))
         # print(encodedStr)
         #await websocket.send(encodedStr)
-        await websocket.send("MyNameIs")
-        print(f"> {greeting}")
+        #await websocket.send("iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==")
+
+        with open("screenshot.jpeg", "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read())
+            print("-- Read --")
+            #print(type(encoded_string))
+            await websocket.send(encoded_string.decode('utf-8'))
+
+        #await websocket.send("MyNameIs")
+        #print(f"> {greeting}")
         print("+++++++++++++++++++++++++++++++++++++++++")
         print("+++++++++++++++++++++++++++++++++++++++++")
         print("+++++++++++++++++++++++++++++++++++++++++")
@@ -200,9 +211,9 @@ async def hello(websocket, path):
 # #####################
 
 # Launch separated thread
-# pygame_init()
-# thread1 = threading.Thread(target=game_forever)
-# thread1.start()
+pygame_init()
+thread1 = threading.Thread(target=game_forever)
+thread1.start()
 
 # Websocket
 start_server = websockets.serve(hello, "0.0.0.0", 7071)

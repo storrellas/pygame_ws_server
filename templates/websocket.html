@@ -2,17 +2,32 @@
 <html>
     <head>
         <title>WebSocket demo</title>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     </head>
     <body>
+
+        <div>
+            <p>Taken from wikpedia</p>
+            <!-- <img src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA
+                AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
+                    9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" /> -->
+            <img class="pygame" src=""></img>
+        </div>
         <script>
             var ws = new WebSocket("ws://127.0.0.1:7071/"),
                 messages = document.createElement('ul');
             ws.onmessage = function (event) {
-                var messages = document.getElementsByTagName('ul')[0],
-                    message = document.createElement('li'),
-                    content = document.createTextNode(event.data);
-                message.appendChild(content);
-                messages.appendChild(message);
+                // var messages = document.getElementsByTagName('ul')[0],
+                //     message = document.createElement('li'),
+                //     content = document.createTextNode(event.data);
+                // message.appendChild(content);
+                // messages.appendChild(message);
+
+                console.log("New file")
+                const img_src= "data:image/jpeg;base64, " + event.data
+                console.log(img_src)
+                $('.pygame').attr('src', img_src )
+
             };
             document.body.appendChild(messages);
         </script>
