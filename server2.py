@@ -12,18 +12,20 @@ import sys
 NEGRO = (0, 0, 0)
 BLANCO = (255, 255, 255)
  
-# Establecemos el largo y alto de cada segmento de la serpiente
-largodel_segmento = 15
-altodel_segmento = 15
+# Set height/width for segment
+segment_width = 15
+segment_height = 15
 # Margen entre cada segmento
 margendel_segmento = 3
  
 #Velocidad inicial
-cambio_x = largodel_segmento + margendel_segmento
+cambio_x = segment_width + margendel_segmento
 cambio_y = 0
 
-class Segmento(pygame.sprite.Sprite):
-    """ Clase que representa un segmento de la serpiente. """
+class Segment(pygame.sprite.Sprite):
+    """ 
+    Segment in the snake
+    """
     # -- Métodos
     #  Función constructor
     def __init__(self, x, y):
@@ -31,13 +33,14 @@ class Segmento(pygame.sprite.Sprite):
         super().__init__()
           
         # Establecemos el alto y largo
-        self.image = pygame.Surface([largodel_segmento, altodel_segmento])
+        self.image = pygame.Surface([segment_height, segment_width])
         self.image.fill(BLANCO)
   
         # Establecemos como punto de partida la esquina superior izquierda.
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+
 
 pantalla = None
 listade_todoslos_sprites = None
@@ -58,11 +61,11 @@ def pygame_init():
     
     # Creamos la serpiente inicial.
     for i in range(15):
-        x = 250 - (largodel_segmento + margendel_segmento) * i
+        x = 250 - (segment_height + margendel_segmento) * i
         y = 30
-        segmento = Segmento(x, y)
-        segementos_dela_serpiente.append(segmento)
-        listade_todoslos_sprites.add(segmento)
+        segment = Segment(x, y)
+        segementos_dela_serpiente.append(segment)
+        listade_todoslos_sprites.add(segment)
     
     
 import base64
@@ -91,31 +94,31 @@ def game_forever():
             # más el margen.
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_LEFT:
-                    cambio_x = (largodel_segmento + margendel_segmento) * -1
+                    cambio_x = (segment_height + margendel_segmento) * -1
                     cambio_y = 0
                 if evento.key == pygame.K_RIGHT:
-                    cambio_x = (largodel_segmento + margendel_segmento)
+                    cambio_x = (segment_height + margendel_segmento)
                     cambio_y = 0
                 if evento.key == pygame.K_UP:
                     cambio_x = 0
-                    cambio_y = (altodel_segmento + margendel_segmento) * -1
+                    cambio_y = (segment_height + margendel_segmento) * -1
                 if evento.key == pygame.K_DOWN:
                     cambio_x = 0
-                    cambio_y = (altodel_segmento + margendel_segmento)
+                    cambio_y = (segment_height + margendel_segmento)
                         
         # Eliminamos el último segmento de la serpiente
         # .pop() este comando elimina el último objeto de una lista.
-        segmento_viejo = segementos_dela_serpiente.pop()
-        listade_todoslos_sprites.remove(segmento_viejo)
+        segment_old = segementos_dela_serpiente.pop()
+        listade_todoslos_sprites.remove(segment_old)
         
         # Determinamos dónde aparecerá el nuevo segmento
         x = segementos_dela_serpiente[0].rect.x + cambio_x
         y = segementos_dela_serpiente[0].rect.y + cambio_y
-        segmento = Segmento(x, y)
+        segment = Segment(x, y)
         
         # Insertamos un nuevo segmento en la lista
-        segementos_dela_serpiente.insert(0, segmento)
-        listade_todoslos_sprites.add(segmento)
+        segementos_dela_serpiente.insert(0, segment)
+        listade_todoslos_sprites.add(segment)
         
         # -- Dibujamos todo
         # Limpiamos la pantalla
@@ -130,15 +133,17 @@ def game_forever():
         reloj.tick(1)
 
 
+        print("New image available")
         pygame.image.save(pantalla, "screenshot.jpeg")
-        #data = pygame.image.tostring(pygame.display.get_surface(), "RGB")
-        # print("New image available")
+        data = pygame.image.tostring(pygame.display.get_surface(), "RGB")
+
         # print(type(data))
 
         # # Standard Base64 Encoding
 
-        # encodedBytes = base64.b64encode(data)
-        # encodedStr = str(encodedBytes, "utf-8")
+        encodedBytes = base64.b64encode(data)
+        #encodedStr = str(encodedBytes, "utf-8")
+        encodedStr = encodedBytes.decode("utf-8")
 
         # with open("Output.txt", "w") as text_file:
         #     text_file.write(encodedStr)
@@ -185,8 +190,11 @@ async def hello(websocket, path):
         with open("screenshot.jpeg", "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read())
             print("-- Read --")
+            if encoded_string != encodedStr:
+                print("they are different")
             #print(type(encoded_string))
             await websocket.send(encoded_string.decode('utf-8'))
+            #await websocket.send(encodedStr)
 
         #await websocket.send("MyNameIs")
         #print(f"> {greeting}")
