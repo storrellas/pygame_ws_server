@@ -1,22 +1,17 @@
 #!/usr/bin/env python
 
-import os
 import threading
-import sys
-import base64
-import time
-
 import pygame
+import sys
 
-from io import StringIO
 
 ############ PY GAME ########################
 
-import os, sys
+# import os, sys
 
-# set SDL to use the dummy NULL video driver, 
-#   so it doesn't need a windowing system.
-#os.environ["SDL_VIDEODRIVER"] = "dummy"
+# # set SDL to use the dummy NULL video driver, 
+# #   so it doesn't need a windowing system.
+# os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 # --- Globals ---
 # Colors
@@ -60,11 +55,14 @@ def pygame_init():
     # Initialise Pygame
     pygame.init()
     
-    pygame.display.set_mode((1,1))
+    # Create a 800x600 display
+    display = pygame.display.set_mode([800, 600])
 
-    # surface alone wouldn't work so I needed to add a rectangle
-    display = pygame.Surface((400, 400), pygame.SRCALPHA, 32)
-    pygame.draw.rect(display, (0,0,0), (0, 0, 400, 400), 0)
+
+    # # surface alone wouldn't work so I needed to add a rectangle
+    # pygame.display.set_mode([1, 1])
+    # display = pygame.Surface((800, 600), pygame.SRCALPHA, 32)
+    # pygame.draw.rect(display, (0,0,0), (0, 0, 800, 600), 0)
     
     # Set title
     pygame.display.set_caption('Snake')
@@ -80,6 +78,10 @@ def pygame_init():
         sprite_list.add(segment)
     
     
+import base64
+from io import StringIO
+
+import time
 
 
 encodedStr = "Empty"
