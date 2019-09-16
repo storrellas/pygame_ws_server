@@ -2,6 +2,7 @@
 
 import threading
 import pygame
+import sys
 
 
 ############ PY GAME ########################
@@ -64,13 +65,19 @@ def pygame_init():
         listade_todoslos_sprites.add(segmento)
     
     
+import base64
+from io import StringIO
+
+import time
 
 
+encodedStr = None
 def game_forever():
     global segementos_dela_serpiente
     global listade_todoslos_sprites
     global cambio_x
     global cambio_y
+    global encodedStr
     reloj = pygame.time.Clock()
     hecho = False
     while not hecho:
@@ -120,11 +127,30 @@ def game_forever():
         pygame.display.flip()
         
         # Pausa
-        reloj.tick(5)
+        reloj.tick(1)
 
         #pygame.image.save(pantalla, "screenshot.jpeg")
-        str = pygame.image.toString(pantalla, "RGBA")
-        print(str)
+        data = pygame.image.tostring(pygame.display.get_surface(), "RGB")
+        print("New image available")
+        print(type(data))
+
+        # Standard Base64 Encoding
+
+        encodedBytes = base64.b64encode(data)
+        encodedStr = str(encodedBytes, "utf-8")
+        # print(len(encodedBytes))
+        # print(encodedBytes[1:10])
+        # print(type(encodedBytes))
+        # print(type(encodedStr))
+
+        # print(type(encodedBytes))
+        # print(type(encodedStr))
+
+        # data = StringIO()
+        # pygame.image.save(pygame.display.get_surface(), data)
+        # #data = base64.b64encode(data.getvalue())
+        # print(type(data))
+
 ############ PY GAME ########################
 
 
@@ -134,22 +160,52 @@ import asyncio
 import websockets
 
 async def hello(websocket, path):
-    name = await websocket.recv()
-    print(f"< {name}")
+    print("Entered ...")
+    while True:
+        print("New Image ...")
+        print("+++++++++++++++++++++++++++++++++++++++++")
+        print("+++++++++++++++++++++++++++++++++++++++++")
+        print("+++++++++++++++++++++++++++++++++++++++++")
+        global encodedStr
+        # name = await websocket.recv()
+        # print(f"< {name}")
+        name="MyName"
 
-    greeting = f"Hello {name}!"
+        greeting = f"Hello {name}!"
 
-    await websocket.send(greeting)
-    print(f"> {greeting}")
+        #await websocket.send(greeting)
+        # print(type(encodedStr))
+        # print(encodedStr)
+        #await websocket.send(encodedStr)
+        await websocket.send("MyNameIs")
+        print(f"> {greeting}")
+        print("+++++++++++++++++++++++++++++++++++++++++")
+        print("+++++++++++++++++++++++++++++++++++++++++")
+        print("+++++++++++++++++++++++++++++++++++++++++")
+        time.sleep(2)
 
+
+# #####################
+# data = "abc123!?$*&()'-=@~"
+
+# # Standard Base64 Encoding
+# encodedBytes = base64.b64encode(data.encode("utf-8"))
+# encodedStr = str(encodedBytes, "utf-8")
+
+# print(type(data))
+# print(type(data.encode("utf-8")))
+# print(type(encodedBytes))
+# print(type(encodedStr))
+# sys.exit(0)
+# #####################
 
 # Launch separated thread
-pygame_init()
-thread1 = threading.Thread(target=game_forever)
-thread1.start()
+# pygame_init()
+# thread1 = threading.Thread(target=game_forever)
+# thread1.start()
 
 # Websocket
-start_server = websockets.serve(hello, "0.0.0.0", 7070)
+start_server = websockets.serve(hello, "0.0.0.0", 7071)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
