@@ -18,8 +18,8 @@ segment_height = 15
 segment_margin = 3
  
 #Velocidad inicial
-cambio_x = segment_width + segment_margin
-cambio_y = 0
+delta_x = segment_width + segment_margin
+delta_y = 0
 
 class Segment(pygame.sprite.Sprite):
     """ 
@@ -40,17 +40,17 @@ class Segment(pygame.sprite.Sprite):
         self.rect.y = y
 
 
-pantalla = None
+display = None
 sprite_list = None
 snake_segments = []
 def pygame_init():
-    global pantalla
+    global display
     global sprite_list
     # Inicializamos Pygame
     pygame.init()
     
-    # Creamos una pantalla de 800x600
-    pantalla = pygame.display.set_mode([800, 600])
+    # Creamos una display de 800x600
+    display = pygame.display.set_mode([800, 600])
     
     # Creamos un título para la ventana
     pygame.display.set_caption('Snake')
@@ -76,33 +76,32 @@ encodedStr = "Empty"
 def game_forever():
     global snake_segments
     global sprin
-    global cambio_x
-    global cambio_y
+    global delta_x
+    global delta_y
     global encodedStr
-    reloj = pygame.time.Clock()
-    hecho = False
-    while not hecho:
+    clock = pygame.time.Clock()
+    done = False
+    while not done:
         
-        for evento in pygame.event.get():
-            if evento.type == pygame.QUIT:
-                hecho = True
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
     
-            # Establecemos la velocidad basándonos en la tecla presionada
-            # Queremos que la velocidad sea la suficiente para mover un segmento
-            # más el margen.
-            if evento.type == pygame.KEYDOWN:
-                if evento.key == pygame.K_LEFT:
-                    cambio_x = (segment_height + segment_margin) * -1
-                    cambio_y = 0
-                if evento.key == pygame.K_RIGHT:
-                    cambio_x = (segment_height + segment_margin)
-                    cambio_y = 0
-                if evento.key == pygame.K_UP:
-                    cambio_x = 0
-                    cambio_y = (segment_height + segment_margin) * -1
-                if evento.key == pygame.K_DOWN:
-                    cambio_x = 0
-                    cambio_y = (segment_height + segment_margin)
+            # Set speed depending on the pressed key
+            # We want speed to be enough to move a segment plus margin
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    delta_x = (segment_height + segment_margin) * -1
+                    delta_y = 0
+                if event.key == pygame.K_RIGHT:
+                    delta_x = (segment_height + segment_margin)
+                    delta_y = 0
+                if event.key == pygame.K_UP:
+                    delta_x = 0
+                    delta_y = (segment_height + segment_margin) * -1
+                if event.key == pygame.K_DOWN:
+                    delta_x = 0
+                    delta_y = (segment_height + segment_margin)
                         
         # Eliminamos el último segmento de la serpiente
         # .pop() este comando elimina el último objeto de una lista.
@@ -110,8 +109,8 @@ def game_forever():
         sprite_list.remove(segment_old)
         
         # Determinamos dónde aparecerá el nuevo segmento
-        x = snake_segments[0].rect.x + cambio_x
-        y = snake_segments[0].rect.y + cambio_y
+        x = snake_segments[0].rect.x + delta_x
+        y = snake_segments[0].rect.y + delta_y
         segment = Segment(x, y)
         
         # Insertamos un nuevo segmento en la lista
@@ -119,20 +118,20 @@ def game_forever():
         sprite_list.add(segment)
         
         # -- Dibujamos todo
-        # Limpiamos la pantalla
-        pantalla.fill(BLACK)
+        # Limpiamos la display
+        display.fill(BLACK)
         
-        sprite_list.draw(pantalla)
+        sprite_list.draw(display)
                 
-        # Actualizamos la pantalla
+        # Update display
         pygame.display.flip()
         
-        # Pausa
-        reloj.tick(1)
+        # Pause
+        clock.tick(1)
 
 
         print("New image available")
-        pygame.image.save(pantalla, "screenshot.jpeg")
+        pygame.image.save(display, "screenshot.jpeg")
         data = pygame.image.tostring(pygame.display.get_surface(), "RGB")
 
         # print(type(data))
